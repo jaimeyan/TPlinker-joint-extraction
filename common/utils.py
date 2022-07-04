@@ -248,7 +248,9 @@ class Preprocessor:
             if tok2char_span[tok_ind][1] != 0:
                 char_num = tok2char_span[tok_ind][1]
                 break
+
         char2tok_span = [[-1, -1] for _ in range(char_num)] # [-1, -1] is whitespace
+
         for tok_ind, char_sp in enumerate(tok2char_span):
             for char_ind in range(char_sp[0], char_sp[1]):
                 tok_sp = char2tok_span[char_ind]

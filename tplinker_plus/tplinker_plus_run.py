@@ -632,43 +632,23 @@ class MetricsCalculator():
              trigger_class_set, \
              arg_iden_set, \
              arg_class_set
-    
-#     def get_mark_sets_rel(self, pred_rel_list, gold_rel_list, pred_ent_list, gold_ent_list, pattern = "only_head_text", gold_event_list = None):
 
-#         if pattern == "only_head_index":
-#             gold_rel_set = set(["{}\u2E80{}\u2E80{}".format(rel["subj_tok_span"][0], rel["predicate"], rel["obj_tok_span"][0]) for rel in gold_rel_list])
-#             pred_rel_set = set(["{}\u2E80{}\u2E80{}".format(rel["subj_tok_span"][0], rel["predicate"], rel["obj_tok_span"][0]) for rel in pred_rel_list])
-#             gold_ent_set = set(["{}\u2E80{}".format(ent["tok_span"][0], ent["type"]) for ent in gold_ent_list])
-#             pred_ent_set = set(["{}\u2E80{}".format(ent["tok_span"][0], ent["type"]) for ent in pred_ent_list])
-                
-#         elif pattern == "whole_span":
-#             gold_rel_set = set(["{}\u2E80{}\u2E80{}\u2E80{}\u2E80{}".format(rel["subj_tok_span"][0], rel["subj_tok_span"][1], rel["predicate"], rel["obj_tok_span"][0], rel["obj_tok_span"][1]) for rel in gold_rel_list])
-#             pred_rel_set = set(["{}\u2E80{}\u2E80{}\u2E80{}\u2E80{}".format(rel["subj_tok_span"][0], rel["subj_tok_span"][1], rel["predicate"], rel["obj_tok_span"][0], rel["obj_tok_span"][1]) for rel in pred_rel_list])
-#             gold_ent_set = set(["{}\u2E80{}\u2E80{}".format(ent["tok_span"][0], ent["tok_span"][1], ent["type"]) for ent in gold_ent_list])
-#             pred_ent_set = set(["{}\u2E80{}\u2E80{}".format(ent["tok_span"][0], ent["tok_span"][1], ent["type"]) for ent in pred_ent_list])
-
-#         elif pattern == "whole_text":
-#             gold_rel_set = set(["{}\u2E80{}\u2E80{}".format(rel["subject"], rel["predicate"], rel["object"]) for rel in gold_rel_list])
-#             pred_rel_set = set(["{}\u2E80{}\u2E80{}".format(rel["subject"], rel["predicate"], rel["object"]) for rel in pred_rel_list])
-#             gold_ent_set = set(["{}\u2E80{}".format(ent["text"], ent["type"]) for ent in gold_ent_list])
-#             pred_ent_set = set(["{}\u2E80{}".format(ent["text"], ent["type"]) for ent in pred_ent_list])
-
-#         elif pattern == "only_head_text":
-#             gold_rel_set = set(["{}\u2E80{}\u2E80{}".format(rel["subject"].split(" ")[0], rel["predicate"], rel["object"].split(" ")[0]) for rel in gold_rel_list])
-#             pred_rel_set = set(["{}\u2E80{}\u2E80{}".format(rel["subject"].split(" ")[0], rel["predicate"], rel["object"].split(" ")[0]) for rel in pred_rel_list])
-#             gold_ent_set = set(["{}\u2E80{}".format(ent["text"].split(" ")[0], ent["type"]) for ent in gold_ent_list])
-#             pred_ent_set = set(["{}\u2E80{}".format(ent["text"].split(" ")[0], ent["type"]) for ent in pred_ent_list])
-
-#         return pred_rel_set, gold_rel_set, pred_ent_set, gold_ent_set
     
     def get_mark_sets_rel(self, rel_list, ent_list, pattern = "only_head_text"):
         if pattern == "only_head_index":
             rel_set = set(["{}\u2E80{}\u2E80{}".format(rel["subj_tok_span"][0], rel["predicate"], rel["obj_tok_span"][0]) for rel in rel_list])
             ent_set = set(["{}\u2E80{}".format(ent["tok_span"][0], ent["type"]) for ent in ent_list])
-                
-        elif pattern == "whole_span": 
+
+        elif pattern == "whole_span":
             rel_set = set(["{}\u2E80{}\u2E80{}\u2E80{}\u2E80{}".format(rel["subj_tok_span"][0], rel["subj_tok_span"][1], rel["predicate"], rel["obj_tok_span"][0], rel["obj_tok_span"][1]) for rel in rel_list])
             ent_set = set(["{}\u2E80{}\u2E80{}".format(ent["tok_span"][0], ent["tok_span"][1], ent["type"]) for ent in ent_list])
+
+        elif pattern == "whole_char_span":
+            rel_set = set(["{}\u2E80{}\u2E80{}\u2E80{}\u2E80{}".format(rel["subj_char_span"][0], rel["subj_char_span"][1],
+                                                                       rel["predicate"], rel["obj_char_span"][0],
+                                                                       rel["obj_char_span"][1]) for rel in rel_list])
+            ent_set = set(
+                ["{}\u2E80{}\u2E80{}".format(ent["char_span"][0], ent["char_span"][1], ent["type"]) for ent in ent_list])
 
         elif pattern == "whole_text":
             rel_set = set(["{}\u2E80{}\u2E80{}".format(rel["subject"], rel["predicate"], rel["object"]) for rel in rel_list])
@@ -679,7 +659,40 @@ class MetricsCalculator():
             ent_set = set(["{}\u2E80{}".format(ent["text"].split(" ")[0], ent["type"]) for ent in ent_list])
 
         return rel_set, ent_set
-    
+
+    # def get_mark_sets_rel(self, rel_list, ent_list, pattern="only_head_text"):
+    #     if pattern == "only_head_index":
+    #         rel_set = set(
+    #             ["{}\u2E80{}\u2E80{}".format(rel["subj_tok_span"][0], rel["predicate"], rel["obj_tok_span"][0]) for rel
+    #              in rel_list])
+    #         ent_set = set(["{}\u2E80{}".format(ent["tok_span"][0], ent["type"]) for ent in ent_list])
+    #
+    #     elif pattern == "whole_span":
+    #         rel_set = set(["{}\u2E80{}\u2E80{}\u2E80{}\u2E80{}".format(rel["subj_tok_span"][0], rel["subj_tok_span"][1],
+    #                                                                    rel["predicate"], rel["obj_tok_span"][0],
+    #                                                                    rel["obj_tok_span"][1]) for rel in rel_list])
+    #         ent_set = set(
+    #             ["{}\u2E80{}\u2E80{}".format(ent["tok_span"][0], ent["tok_span"][1], ent["type"]) for ent in ent_list])
+    #
+    #     elif pattern == "whole_char_span":
+    #         rel_set = set(["{}\u2E80{}\u2E80{}\u2E80{}\u2E80{}".format(rel["subj_char_span"][0], rel["subj_char_span"][1],
+    #                                                                    rel["predicate"], rel["obj_char_span"][0],
+    #                                                                    rel["obj_char_span"][1]) for rel in rel_list])
+    #         ent_set = set(
+    #             ["{}\u2E80{}\u2E80{}".format(ent["char_span"][0], ent["char_span"][1], ent["type"]) for ent in ent_list])
+    #
+    #     elif pattern == "whole_text":
+    #         rel_set = set(
+    #             ["{}\u2E80{}\u2E80{}".format(rel["subject"], rel["predicate"], rel["object"]) for rel in rel_list])
+    #         ent_set = set(["{}\u2E80{}".format(ent["text"], ent["type"]) for ent in ent_list])
+    #
+    #     elif pattern == "only_head_text":
+    #         rel_set = set(["{}\u2E80{}\u2E80{}".format(rel["subject"].split(" ")[0], rel["predicate"],
+    #                                                    rel["object"].split(" ")[0]) for rel in rel_list])
+    #         ent_set = set(["{}\u2E80{}".format(ent["text"].split(" ")[0], ent["type"]) for ent in ent_list])
+    #
+    #     return rel_set, ent_set
+
     def _cal_cpg(self, pred_set, gold_set, cpg):
         '''
         cpg is a list: [correct_num, pred_num, gold_num]

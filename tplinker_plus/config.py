@@ -2,30 +2,30 @@ import string
 import random
 
 common = {
-    "exp_name": "duie2", # ace05_lu
+    "exp_name": "huayandan4", # ace05_lu
     "rel2id": "rel2id.json",
     "ent2id": "ent2id.json",
-    "device_num": 1,
+    "device_num": 0,
 #     "encoder": "BiLSTM",
-    "encoder": "BERT", 
+    "encoder": "BERT",
     "hyper_parameters": {
         "shaking_type": "cln_plus",
         "inner_enc_type": "lstm",
         # match_pattern: only_head_text (nyt_star, webnlg_star), whole_text (nyt, webnlg), only_head_index, whole_span, event_extraction
-        "match_pattern": "whole_text", 
+        "match_pattern": "whole_char_span",
     },
 }
 common["run_name"] = "{}+{}+{}".format("TP2", common["hyper_parameters"]["shaking_type"], common["encoder"]) + ""
 
 run_id = ''.join(random.sample(string.ascii_letters + string.digits, 8))
 train_config = {
-    "train_data": "train_data.json",
-    "valid_data": "valid_data.json",
+    "train_data": "huayandan_train_0620.json",
+    "valid_data": "huayandan_val_0620.json",
     "rel2id": "rel2id.json",
     "logger": "wandb", # if wandb, comment the following four lines
-   
+
 #     # if logger is set as default, uncomment the following four lines and comment the line above
-#     "logger": "default", 
+#     "logger": "default",
 #     "run_id": run_id,
 #     "log_path": "./default_log_dir/default.log",
 #     "path_to_save_model": "./default_log_dir/{}".format(run_id),
@@ -39,7 +39,7 @@ train_config = {
     # if not fr scratch, set a model_state_dict
     "model_state_dict_path": "", # valid only if "fr_scratch" is False
     "hyper_parameters": {
-        "batch_size": 32,
+        "batch_size": 16,
         "epochs": 100,
         "seed": 2333,
         "log_interval": 10,
@@ -53,28 +53,28 @@ train_config = {
 
 eval_config = {
     "model_state_dict_dir": "./wandb", # if use wandb, set "./wandb", or set "./default_log_dir" if you use default logger
-    "run_ids": ["1a70p109", ],
+    "run_ids": ["2zflt30s", ],
     "last_k_model": 1,
-    "test_data": "*test*.json", # "*test*.json"
-    
+    "test_data": "huayandan_test_0620.json", # "*test*.json"
+    "activate_learning_thresh": 0.5,
     # results
     "save_res": False,
     "save_res_dir": "../results",
-    
+
     # score: set true only if test set is tagged
     "score": True,
-    
+
     "hyper_parameters": {
-        "batch_size": 32,
+        "batch_size": 16,
         "force_split": False,
-        "max_seq_len": 512,
-        "sliding_len": 50,
+        "max_seq_len": 128,
+        "sliding_len": 20,
     },
 }
 
 bert_config = {
     "data_home": "../data4bert",
-    "bert_path": "../../pretrained_models/chinese-bert-wwm-ext-hit", # bert-base-cased， chinese-bert-wwm-ext-hit
+    "bert_path": "../pretrained_models/BERT_EMR", # bert-base-cased， chinese-bert-wwm-ext-hit
     "hyper_parameters": {
         "lr": 5e-5,
     },
@@ -113,7 +113,7 @@ elif common["encoder"] == "BiLSTM":
     hyper_params = {**common["hyper_parameters"], **bilstm_config["hyper_parameters"]}
     common = {**common, **bilstm_config}
     common["hyper_parameters"] = hyper_params
-    
+
 hyper_params = {**common["hyper_parameters"], **train_config["hyper_parameters"]}
 train_config = {**train_config, **common}
 train_config["hyper_parameters"] = hyper_params
@@ -121,7 +121,7 @@ if train_config["hyper_parameters"]["scheduler"] == "CAWR":
     train_config["hyper_parameters"] = {**train_config["hyper_parameters"], **cawr_scheduler}
 elif train_config["hyper_parameters"]["scheduler"] == "Step":
     train_config["hyper_parameters"] = {**train_config["hyper_parameters"], **step_scheduler}
-    
+
 hyper_params = {**common["hyper_parameters"], **eval_config["hyper_parameters"]}
 eval_config = {**eval_config, **common}
 eval_config["hyper_parameters"] = hyper_params
