@@ -1,3 +1,7 @@
+import sys
+
+sys.path.append("..")
+
 from flask import Flask, request
 from predict.predictor import Predictor
 import uuid
@@ -8,7 +12,6 @@ import cv2, os, requests, json
 from numpy import mean
 from collections import defaultdict
 from tqdm import tqdm
-
 
 # image = cv2.imread('../data/pics/化验单-1.jpg')
 # print(image.shape)
@@ -201,7 +204,7 @@ def emr_server():
     success_pages = ocr_response['data']['success_pages']
     errors = ocr_response['errors']
     detect_img_name = ocr_response['data']['img_data_list'][0]['detect_img_name']
-    detect_img_path = ocr_response['data']['img_data_list'][0]['detect_img_path']
+    # detect_img_path = ocr_response['data']['img_data_list'][0]['detect_img_path']
 
     ori_data = [{
         "id": pic_name,
@@ -218,28 +221,16 @@ def emr_server():
         "code": 200,
         "data":
             {
-                "failed_pages": failed_pages,
-                "img_data_list": [
-                    {
-                        "detect_img_name": detect_img_name,
-                        "detect_img_path": detect_img_path,
-                        "extract_infos": extract_info,
-                        "height": 0,
-                        "rotate_angle": 0.0,
-                        "status_code": 200,
-                        "width": 0
-                    }
-                ],
-                "msg": "success",
-                "ori_file_name": pic_name,
-                "request_id": request_id,
-                "success_pages": success_pages
+                "texts": [],
+                "examinationList": lis_list,
+                "basicInfos": basicinfo
             },
-        "errors": errors,
+        "detect_img_name": detect_img_name,
+        "error": errors,
         "success": True
     }
     res = json.dumps(bag, ensure_ascii=False)
     return res
 
 
-app.run(host='0.0.0.0', port=1000, debug=True)
+app.run(host='0.0.0.0', port=61000, debug=True)
